@@ -1,0 +1,94 @@
+----------------------------------------1/7/2025-----------------------------------
+
+
+select * from departments;
+select * from employees;
+
+
+
+1. fimd the second highest salary
+
+select max(salary) from employees 
+where salary <(select max(salary)from employees);
+
+2. count of employees in each department.
+
+select  d.dept_id, d.dept_name, count(e.emp_id) as employee_count 
+from departments d 
+left join employees e on d.dept_id=e.dept_id
+group by d.dept_id,d.dept_name;
+
+
+3. find Duplicate records 
+
+select emp_name, count(*) from employees 
+group by emp_name 
+having count(*)>1;
+
+4. how you can delete duplicate records 
+
+DELETE FROM employees
+WHERE ROWID NOT IN (
+  SELECT MIN(ROWID)
+  FROM employees
+  GROUP BY emp_name
+);
+
+select * from employees;
+rollback;
+select * from employees;
+
+5. Find Employees Who joined in 2020
+
+select * from employees where to_char(hire_date,'YYYY')=2020;
+
+6 . Get Total Salary by Department
+
+select d.dept_name ,sum(e.salary) as total_sal_by_dept
+from departments d 
+left join employees e on d.dept_id=e.dept_id 
+group by dept_name;
+
+7.find nth highest salary
+
+select salary from
+(select distinct salary, row_number ()
+over ( order by salary desc) as row_num from employees)
+where row_num =4 ;
+
+8.find max salary from each departement
+
+select dept_id , max(salary) from employees 
+group by dept_id;
+
+9. Get Employee Details with Department Names
+
+select distinct e.emp_name ,d.dept_name from employees e 
+left join departments d 
+on e.dept_id = d.dept_id;
+
+10. Find all employees whose names contain the letters "a" exactly twice
+
+select emp_name from employees 
+where length(emp_name)- length(replace(lower(emp_name),'a',''))=2;
+
+11. Find employees earning more than average salary in their department
+
+select * from employees e 
+where salary > ( select avg(salary)
+from employees where dept_id=e.dept_id);
+
+12. Write a query to count how many employees share the same salary
+
+select salary ,count(*) as emp_count
+from employees 
+group by salary
+having count(*)>1;
+
+
+14. How to get the common records from two tables?
+
+select dept_id from employees
+intersect
+select dept_id from departments;
+
